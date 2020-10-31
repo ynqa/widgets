@@ -13,6 +13,7 @@ type Node struct {
 	isLeaf       bool
 	depth        int
 	childVisible bool
+	parent       *Node
 	children     []*Node
 }
 
@@ -68,6 +69,9 @@ func (n *Node) AddChildren(children []*Node) *Node {
 		sort.Slice(children, func(i, j int) bool {
 			return children[i].name < children[j].name
 		})
+		for _, child := range children {
+			child.parent = n
+		}
 		n.children = children
 	}
 	return n
@@ -102,4 +106,16 @@ func (n *Node) flatten(cursor int, all bool) []*Node {
 		}
 	}
 	return nodes
+}
+
+func (n *Node) Names() []string {
+	var names []string
+	fmt.Println(n.name)
+	if !n.isRoot {
+		names = append(names, n.name)
+	}
+	if n.parent != nil {
+		names = append(names, n.parent.Names()...)
+	}
+	return names
 }
