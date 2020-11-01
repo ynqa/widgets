@@ -109,7 +109,11 @@ func (self *ToggleTable) Draw(buf *Buffer) {
 				style = self.CursorStyle
 			}
 			for i, width := range self.Widths {
-				r := TrimString(self.rowPrefix(node)+node.Row()[i], width-widthFromLeftBorder)
+				row := node.Row()[i]
+				if i == 0 {
+					row = self.rowPrefix(node)+node.Row()[i]
+				}
+				r := TrimString(row, width-widthFromLeftBorder)
 				buf.SetString(
 					r,
 					style,

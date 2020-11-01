@@ -16,17 +16,17 @@ func main() {
 	defer termui.Close()
 
 	table := widgets.NewToggleTable()
-	table.Headers = []string{"index"}
-	table.Widths = []int{10}
+	table.Headers = []string{"index", "item"}
+	table.Widths = []int{10, 10}
 	table.Title = "example"
 
 	root := node.Root()
 	root.AddChildren(
-		node.New("0", []string{"0"}).AddChildren(
-			node.New("1", []string{"1"}).AddChildren(
-				node.Leaf("2", []string{"2"}),
+		node.New("0", []string{"0", "aaa"}).AddChildren(
+			node.New("1", []string{"1", "bbb"}).AddChildren(
+				node.Leaf("2", []string{"2", "ccc"}),
 			),
-			node.Leaf("3", []string{"3"}),
+			node.Leaf("3", []string{"3", "ddd"}),
 		),
 	)
 	table.Node = root
