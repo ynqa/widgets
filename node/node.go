@@ -21,13 +21,15 @@ func Root() *Node {
 	return &Node{
 		isRoot:       true,
 		childVisible: true,
+		children:     make([]*Node, 0),
 	}
 }
 
 func New(name string, row []string) *Node {
 	return &Node{
-		name: name,
-		row:  row,
+		name:     name,
+		row:      row,
+		children: make([]*Node, 0),
 	}
 }
 
