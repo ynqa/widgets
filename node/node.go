@@ -110,7 +110,6 @@ func (n *Node) flatten(cursor int, all bool) []*Node {
 
 func (n *Node) Names() []string {
 	var names []string
-	fmt.Println(n.name)
 	if !n.isRoot {
 		names = append(names, n.name)
 	}
