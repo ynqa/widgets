@@ -66,13 +66,13 @@ func (n *Node) Row() []string {
 
 func (n *Node) AddChildren(children ...*Node) *Node {
 	if len(children) > 0 && !n.isLeaf {
-		sort.Slice(children, func(i, j int) bool {
-			return children[i].name < children[j].name
-		})
 		for _, child := range children {
 			child.parent = n
 		}
-		n.children = children
+		n.children = append(n.children, children...)
+		sort.Slice(n.children, func(i, j int) bool {
+			return n.children[i].name < n.children[j].name
+		})
 	}
 	return n
 }
