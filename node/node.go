@@ -66,7 +66,7 @@ func (n *Node) Row() []string {
 	return n.row
 }
 
-func (n *Node) AddChildren(children ...*Node) *Node {
+func (n *Node) Append(children ...*Node) *Node {
 	if len(children) > 0 && !n.isLeaf {
 		for _, child := range children {
 			child.parent = n
@@ -77,6 +77,29 @@ func (n *Node) AddChildren(children ...*Node) *Node {
 		})
 	}
 	return n
+}
+
+func ApplyChildVisible(old *Node, new *Node) *Node {
+	if old == nil && new == nil {
+		return nil
+	}
+	if old == nil {
+		return new
+	}
+	if new == nil {
+		return old
+	}
+
+	if new.name == old.name {
+		new.childVisible = old.childVisible
+	}
+
+	for _, c1 := range old.children {
+		for _, c2 := range new.children {
+			ApplyChildVisible(c1, c2)
+		}
+	}
+	return new
 }
 
 func (n *Node) Toggle(idx int) {

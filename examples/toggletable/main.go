@@ -21,9 +21,9 @@ func main() {
 	table.Title = "example"
 
 	root := node.Root()
-	root.AddChildren(
-		node.New("0", []string{"0", "aaa"}).AddChildren(
-			node.New("1", []string{"1", "bbb"}).AddChildren(
+	root.Append(
+		node.New("0", []string{"0", "aaa"}).Append(
+			node.New("1", []string{"1", "bbb"}).Append(
 				node.Leaf("2", []string{"2", "ccc"}),
 			),
 			node.Leaf("3", []string{"3", "ddd"}),

@@ -34,6 +34,7 @@ type ToggleTable struct {
 func NewToggleTable() *ToggleTable {
 	return &ToggleTable{
 		Block:        NewBlock(),
+		Node:         node.Root(),
 		HeaderStyle:  NewStyle(Theme.Default.Fg, Theme.Default.Bg, ModifierBold),
 		CursorStyle:  NewStyle(ColorBlack, ColorYellow),
 		RowStyle:     NewStyle(Theme.Default.Fg),
