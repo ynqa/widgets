@@ -21,14 +21,14 @@ func main() {
 	table.Title = "example"
 
 	root := node.Root()
-	root.AddChildren([]*node.Node{
-		node.New("0", []string{"0"}).AddChildren([]*node.Node{
-			node.New("1", []string{"1"}).AddChildren([]*node.Node{
+	root.AddChildren(
+		node.New("0", []string{"0"}).AddChildren(
+			node.New("1", []string{"1"}).AddChildren(
 				node.Leaf("2", []string{"2"}),
-			}),
+			),
 			node.Leaf("3", []string{"3"}),
-		}),
-	})
+		),
+	)
 	table.Node = root
 
 	event := termui.PollEvents()
