@@ -62,6 +62,10 @@ func (n *Node) IsLeaf() bool {
 	return n.isLeaf
 }
 
+func (n *Node) Name() string {
+	return n.name
+}
+
 func (n *Node) Row() []string {
 	return n.row
 }
