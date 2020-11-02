@@ -133,13 +133,13 @@ func (n *Node) flatten(cursor int, all bool) []*Node {
 	return nodes
 }
 
-func (n *Node) Names() []string {
-	var names []string
+func (n *Node) Parents() []*Node {
+	var nodes []*Node
 	if !n.isRoot {
-		names = append(names, n.name)
+		nodes = append(nodes, n)
 	}
 	if n.parent != nil {
-		names = append(names, n.parent.Names()...)
+		nodes = append(nodes, n.parent.Parents()...)
 	}
-	return names
+	return nodes
 }
