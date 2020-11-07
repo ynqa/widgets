@@ -5,7 +5,7 @@ import (
 
 	"github.com/gizak/termui/v3"
 
-	"github.com/ynqa/widgets"
+	"github.com/ynqa/widgets/pkg/widgets"
 )
 
 func main() {

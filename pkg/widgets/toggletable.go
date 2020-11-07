@@ -7,7 +7,7 @@ import (
 
 	. "github.com/gizak/termui/v3"
 
-	"github.com/ynqa/widgets/node"
+	"github.com/ynqa/widgets/pkg/node"
 )
 
 const (
