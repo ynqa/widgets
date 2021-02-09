@@ -57,9 +57,7 @@ func (self *ToggleTable) rowPrefix(n *node.Node) string {
 func (self *ToggleTable) Draw(buf *Buffer) {
 	self.Block.Draw(buf)
 
-	// coordinates: space from border + header + initial row = 3
 	if self.Inner.Dy() >= 3 {
-		// store start positions for each column
 		var (
 			colPos []int
 			cur    int = widthFromLeftBorder
@@ -69,16 +67,13 @@ func (self *ToggleTable) Draw(buf *Buffer) {
 			cur += w
 		}
 
-		// draw headers
 		for i, h := range self.Headers {
-			// replace to '…' if the field is over
 			h := TrimString(h, self.Widths[i]-widthFromLeftBorder)
 			buf.SetString(
 				h,
 				self.HeaderStyle,
 				image.Pt(
 					self.Inner.Min.X+colPos[i],
-					// coordinates: space from border = 1
 					self.Inner.Min.Y+1),
 			)
 		}
@@ -86,16 +81,13 @@ func (self *ToggleTable) Draw(buf *Buffer) {
 		if self.SelectedRow < self.drawInitialRow {
 			self.drawInitialRow = self.SelectedRow
 		} else if self.SelectedRow >= self.drawInitialRow+self.Inner.Dy()-2 {
-			// coordinates: space from border + header = 2
 			self.drawInitialRow += self.Inner.Dy() - 2
 		}
 
 		nodes := self.Node.Flatten()
 
-		// draw rows
 		for idx := self.drawInitialRow; idx >= 0 && idx < len(nodes) && idx < self.drawInitialRow+self.Inner.Dy()-2; idx++ {
 			node := nodes[idx]
-			// coordinates: space from border + header = 2
 			y := self.Inner.Min.Y + idx - self.drawInitialRow + 2
 			if idx == self.SelectedRow {
 				buf.SetString(
