@@ -10,7 +10,6 @@ type Node struct {
 	name         string
 	row          []string
 	isRoot       bool
-	isLeaf       bool
 	depth        int
 	childVisible bool
 	parent       *Node
@@ -33,14 +32,6 @@ func New(name string, row []string) *Node {
 	}
 }
 
-func Leaf(name string, row []string) *Node {
-	return &Node{
-		name:   name,
-		row:    row,
-		isLeaf: true,
-	}
-}
-
 func (n *Node) String() string {
 	nodes := n.FlattenAll()
 	var builder strings.Builder
@@ -59,7 +50,7 @@ func (n *Node) Depth() int {
 }
 
 func (n *Node) IsLeaf() bool {
-	return n.isLeaf
+	return len(n.children) == 0
 }
 
 func (n *Node) Name() string {
@@ -71,7 +62,7 @@ func (n *Node) Row() []string {
 }
 
 func (n *Node) Append(children ...*Node) *Node {
-	if len(children) > 0 && !n.isLeaf {
+	if len(children) > 0 {
 		for _, child := range children {
 			child.parent = n
 		}

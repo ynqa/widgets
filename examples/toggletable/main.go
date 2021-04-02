@@ -24,9 +24,9 @@ func main() {
 	root.Append(
 		node.New("0", []string{"0", "aaa"}).Append(
 			node.New("1", []string{"1", "bbb"}).Append(
-				node.Leaf("2", []string{"2", "ccc"}),
+				node.New("2", []string{"2", "ccc"}),
 			),
-			node.Leaf("3", []string{"3", "ddd"}),
+			node.New("3", []string{"3", "ddd"}),
 		),
 	)
 	table.Node = root
