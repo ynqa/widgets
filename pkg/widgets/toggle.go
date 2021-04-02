@@ -73,7 +73,8 @@ func (self *Toggle) Draw(buf *Buffer) {
 				self.HeaderStyle,
 				image.Pt(
 					self.Inner.Min.X+colPos[i],
-					self.Inner.Min.Y+1),
+					self.Inner.Min.Y+1,
+				),
 			)
 		}
 
