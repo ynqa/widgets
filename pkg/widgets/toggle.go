@@ -68,9 +68,8 @@ func (self *Toggle) Draw(buf *Buffer) {
 		}
 
 		for i, h := range self.Headers {
-			h := TrimString(h, self.Widths[i]-widthFromLeftBorder)
 			buf.SetString(
-				h,
+				TrimString(h, self.Widths[i]-widthFromLeftBorder),
 				self.HeaderStyle,
 				image.Pt(
 					self.Inner.Min.X+colPos[i],
@@ -106,9 +105,8 @@ func (self *Toggle) Draw(buf *Buffer) {
 				if i == 0 {
 					row = self.rowPrefix(node) + node.Row()[i]
 				}
-				r := TrimString(row, width-widthFromLeftBorder)
 				buf.SetString(
-					r,
+					TrimString(row, width-widthFromLeftBorder),
 					style,
 					image.Pt(self.Inner.Min.X+colPos[i], y),
 				)
