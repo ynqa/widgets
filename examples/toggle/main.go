@@ -15,10 +15,10 @@ func main() {
 	}
 	defer termui.Close()
 
-	table := widgets.NewToggleTable()
-	table.Headers = []string{"index", "item"}
-	table.Widths = []int{10, 10}
-	table.Title = "example"
+	toggle := widgets.NewToggle()
+	toggle.Headers = []string{"index", "item"}
+	toggle.Widths = []int{10, 10}
+	toggle.Title = "example"
 
 	root := node.Root()
 	root.Append(
@@ -29,29 +29,29 @@ func main() {
 			node.New("3", []string{"3", "ddd"}),
 		),
 	)
-	table.Node = root
+	toggle.Node = root
 
 	event := termui.PollEvents()
 	setRect := func() {
 		width, height := termui.TerminalDimensions()
-		table.SetRect(0, 1, width, height-1)
+		toggle.SetRect(0, 1, width, height-1)
 	}
 	setRect()
-	termui.Render(table)
+	termui.Render(toggle)
 
 	for e := range event {
 		switch e.ID {
 		case "<Enter>":
-			root.Toggle(table.SelectedRow)
+			root.Toggle(toggle.SelectedRow)
 		case "<Down>":
-			table.ScrollDown()
+			toggle.ScrollDown()
 		case "<Up>":
-			table.ScrollUp()
+			toggle.ScrollUp()
 		case "q", "<C-c>":
 			return
 		case "<Resize>":
 			setRect()
 		}
-		termui.Render(table)
+		termui.Render(toggle)
 	}
 }
