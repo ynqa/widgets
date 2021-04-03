@@ -14,7 +14,7 @@ const (
 	widthFromLeftBorder = 2
 )
 
-type Toggle struct {
+type Table struct {
 	*Block
 
 	Headers []string
@@ -31,8 +31,8 @@ type Toggle struct {
 	drawInitialRow int
 }
 
-func NewToggle() *Toggle {
-	return &Toggle{
+func NewTable() *Table {
+	return &Table{
 		Block:        NewBlock(),
 		Node:         node.Root(),
 		HeaderStyle:  NewStyle(Theme.Default.Fg, Theme.Default.Bg, ModifierBold),
@@ -43,7 +43,7 @@ func NewToggle() *Toggle {
 	}
 }
 
-func (self *Toggle) rowPrefix(n *node.Node) string {
+func (self *Table) rowPrefix(n *node.Node) string {
 	arrow := string(self.FoldSymbol)
 	if n.ChildVisible() {
 		arrow = string(self.UnfoldSymbol)
@@ -54,7 +54,7 @@ func (self *Toggle) rowPrefix(n *node.Node) string {
 	return strings.Repeat(" ", n.Depth()) + arrow + " "
 }
 
-func (self *Toggle) Draw(buf *Buffer) {
+func (self *Table) Draw(buf *Buffer) {
 	self.Block.Draw(buf)
 
 	if self.Inner.Dy() >= 3 {
@@ -116,7 +116,7 @@ func (self *Toggle) Draw(buf *Buffer) {
 	}
 }
 
-func (self *Toggle) setselected(idx int) {
+func (self *Table) setselected(idx int) {
 	rows := self.Node.Flatten()
 	self.SelectedRow = idx
 	max := len(rows) - 1
@@ -127,10 +127,10 @@ func (self *Toggle) setselected(idx int) {
 	}
 }
 
-func (self *Toggle) ScrollUp() {
+func (self *Table) ScrollUp() {
 	self.setselected(self.SelectedRow - 1)
 }
 
-func (self *Toggle) ScrollDown() {
+func (self *Table) ScrollDown() {
 	self.setselected(self.SelectedRow + 1)
 }
