@@ -18,6 +18,7 @@ type Table struct {
 	opts option
 
 	headers []string
+	widthFn widthFn
 	node    *node.Node
 
 	selectedRow    int
@@ -31,10 +32,9 @@ type widthFn func([]string, image.Rectangle) []int
 func defaultWidthFn() widthFn {
 	return widthFn(
 		func(headers []string, rect image.Rectangle) []int {
-			widths := []int{rect.Dx() / 2}
-			denom := 2 * (len(headers) - 1)
-			for i := 1; i < len(headers); i++ {
-				widths = append(widths, rect.Dx()/denom)
+			var widths []int
+			for i := 0; i < len(headers); i++ {
+				widths = append(widths, rect.Dx()/len(headers))
 			}
 			return widths
 		},
@@ -43,7 +43,6 @@ func defaultWidthFn() widthFn {
 
 type option struct {
 	block            *termui.Block
-	widthFn          widthFn
 	headerStyle      termui.Style
 	cursoredRowStyle termui.Style
 	defaultRowStyle  termui.Style
@@ -56,12 +55,6 @@ type Option func(*option)
 func Block(block *termui.Block) Option {
 	return Option(func(o *option) {
 		o.block = block
-	})
-}
-
-func WidthFn(fn widthFn) Option {
-	return Option(func(o *option) {
-		o.widthFn = fn
 	})
 }
 
@@ -98,7 +91,6 @@ func UnfoldedSymbol(symbol rune) Option {
 func New(opts ...Option) *Table {
 	option := option{
 		block:            termui.NewBlock(),
-		widthFn:          defaultWidthFn(),
 		headerStyle:      termui.NewStyle(termui.Theme.Default.Fg, termui.Theme.Default.Bg, termui.ModifierBold),
 		cursoredRowStyle: termui.NewStyle(termui.ColorBlack, termui.ColorYellow),
 		defaultRowStyle:  termui.NewStyle(termui.Theme.Default.Fg),
@@ -110,8 +102,10 @@ func New(opts ...Option) *Table {
 	}
 
 	return &Table{
-		opts: option,
-		node: node.Root(),
+		opts:    option,
+		headers: make([]string, 0),
+		widthFn: defaultWidthFn(),
+		node:    node.Root(),
 	}
 }
 
@@ -135,6 +129,10 @@ func (self *Table) SetHeaders(headers []string) {
 	self.headers = headers
 }
 
+func (self *Table) SetWidthFn(fn widthFn) {
+	self.widthFn = fn
+}
+
 func (self *Table) SetNode(node *node.Node) {
 	self.node = node
 }
@@ -153,7 +151,7 @@ func (self *Table) rowPrefix(n *node.Node) string {
 func (self *Table) Draw(buf *termui.Buffer) {
 	self.opts.block.Draw(buf)
 
-	widths := self.opts.widthFn(self.headers, self.opts.block.Inner)
+	widths := self.widthFn(self.headers, self.opts.block.Inner)
 
 	if self.opts.block.Inner.Dy() >= 3 {
 		var (
