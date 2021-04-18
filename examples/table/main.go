@@ -5,8 +5,8 @@ import (
 
 	"github.com/gizak/termui/v3"
 
-	"github.com/ynqa/widgets/pkg/node"
-	"github.com/ynqa/widgets/pkg/widgets"
+	"github.com/ynqa/widgets/pkg/table"
+	"github.com/ynqa/widgets/pkg/table/node"
 )
 
 func main() {
@@ -15,10 +15,19 @@ func main() {
 	}
 	defer termui.Close()
 
-	table := widgets.NewTable()
-	table.Headers = []string{"index", "item"}
-	table.Widths = []int{10, 10}
-	table.Title = "example"
+	headers := []table.Header{
+		{
+			Header: "index",
+			Width:  10,
+		},
+		{
+			Header: "item",
+			Width:  10,
+		},
+	}
+	block := termui.NewBlock()
+	block.Title = "example"
+	t := table.New(headers, table.Block(block))
 
 	root := node.Root()
 	root.Append(
@@ -29,29 +38,29 @@ func main() {
 			node.New("3", []string{"3", "ddd"}),
 		),
 	)
-	table.Node = root
+	t.SetNode(root)
 
 	event := termui.PollEvents()
 	setRect := func() {
 		width, height := termui.TerminalDimensions()
-		table.SetRect(0, 1, width, height-1)
+		t.SetRect(0, 1, width, height-1)
 	}
 	setRect()
-	termui.Render(table)
+	termui.Render(t)
 
 	for e := range event {
 		switch e.ID {
 		case "<Enter>":
-			root.Toggle(table.SelectedRow)
+			root.Toggle(t.SelectedRow())
 		case "<Down>":
-			table.ScrollDown()
+			t.ScrollDown()
 		case "<Up>":
-			table.ScrollUp()
+			t.ScrollUp()
 		case "q", "<C-c>":
 			return
 		case "<Resize>":
 			setRect()
 		}
-		termui.Render(table)
+		termui.Render(t)
 	}
 }
