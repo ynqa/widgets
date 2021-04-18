@@ -6,8 +6,7 @@ import (
 	"sync"
 	"unicode/utf8"
 
-	. "github.com/gizak/termui/v3"
-
+	"github.com/gizak/termui/v3"
 	"github.com/ynqa/widgets/pkg/table/node"
 )
 
@@ -33,35 +32,35 @@ type Header struct {
 }
 
 type option struct {
-	block            *Block
-	headerStyle      Style
-	cursoredRowStyle Style
-	defaultRowStyle  Style
+	block            *termui.Block
+	headerStyle      termui.Style
+	cursoredRowStyle termui.Style
+	defaultRowStyle  termui.Style
 	foldedSymbol     rune
 	unfoldedSymbol   rune
 }
 
 type Option func(*option)
 
-func Block(block *Block) Option {
+func Block(block *termui.Block) Option {
 	return Option(func(o *option) {
 		o.block = block
 	})
 }
 
-func HeaderStyle(style Style) Option {
+func HeaderStyle(style termui.Style) Option {
 	return Option(func(o *option) {
 		o.headerStyle = style
 	})
 }
 
-func CursoredRowStyle(style Style) Option {
+func CursoredRowStyle(style termui.Style) Option {
 	return Option(func(o *option) {
 		o.cursoredRowStyle = style
 	})
 }
 
-func DefaultRowStyle(style Style) Option {
+func DefaultRowStyle(style termui.Style) Option {
 	return Option(func(o *option) {
 		o.defaultRowStyle = style
 	})
@@ -81,10 +80,10 @@ func UnfoldedSymbol(symbol rune) Option {
 
 func New(headers []Header, opts ...Option) *Table {
 	option := option{
-		block:            NewBlock(),
-		headerStyle:      NewStyle(Theme.Default.Fg, Theme.Default.Bg, ModifierBold),
-		cursoredRowStyle: NewStyle(ColorBlack, ColorYellow),
-		defaultRowStyle:  NewStyle(Theme.Default.Fg),
+		block:            termui.NewBlock(),
+		headerStyle:      termui.NewStyle(termui.Theme.Default.Fg, termui.Theme.Default.Bg, termui.ModifierBold),
+		cursoredRowStyle: termui.NewStyle(termui.ColorBlack, termui.ColorYellow),
+		defaultRowStyle:  termui.NewStyle(termui.Theme.Default.Fg),
 		foldedSymbol:     '▸',
 		unfoldedSymbol:   '▾',
 	}
@@ -126,7 +125,7 @@ func (self *Table) rowPrefix(n *node.Node) string {
 	return strings.Repeat(" ", n.Depth()) + arrow + " "
 }
 
-func (self *Table) Draw(buf *Buffer) {
+func (self *Table) Draw(buf *termui.Buffer) {
 	self.opts.block.Draw(buf)
 
 	if self.opts.block.Inner.Dy() >= 3 {
@@ -141,7 +140,7 @@ func (self *Table) Draw(buf *Buffer) {
 
 		for i, h := range self.headers {
 			buf.SetString(
-				TrimString(h.Header, h.Width-widthFromLeftBorder),
+				termui.TrimString(h.Header, h.Width-widthFromLeftBorder),
 				self.opts.headerStyle,
 				image.Pt(
 					self.opts.block.Inner.Min.X+colPos[i],
@@ -179,7 +178,7 @@ func (self *Table) Draw(buf *Buffer) {
 					row = self.rowPrefix(node) + node.Row()[i]
 				}
 				buf.SetString(
-					TrimString(row, h.Width-widthFromLeftBorder),
+					termui.TrimString(row, h.Width-widthFromLeftBorder),
 					style,
 					image.Pt(self.opts.block.Inner.Min.X+colPos[i], y),
 				)
