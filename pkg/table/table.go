@@ -17,7 +17,7 @@ const (
 type Table struct {
 	opts option
 
-	headers []Header
+	headers []string
 	node    *node.Node
 
 	selectedRow    int
@@ -26,13 +26,24 @@ type Table struct {
 	sync.Mutex
 }
 
-type Header struct {
-	Header string
-	Width  int
+type widthFn func([]string, image.Rectangle) []int
+
+func defaultWidthFn() widthFn {
+	return widthFn(
+		func(headers []string, rect image.Rectangle) []int {
+			widths := []int{rect.Dx() / 2}
+			denom := 2 * (len(headers) - 1)
+			for i := 1; i < len(headers); i++ {
+				widths = append(widths, rect.Dx()/denom)
+			}
+			return widths
+		},
+	)
 }
 
 type option struct {
 	block            *termui.Block
+	widthFn          widthFn
 	headerStyle      termui.Style
 	cursoredRowStyle termui.Style
 	defaultRowStyle  termui.Style
@@ -45,6 +56,12 @@ type Option func(*option)
 func Block(block *termui.Block) Option {
 	return Option(func(o *option) {
 		o.block = block
+	})
+}
+
+func WidthFn(fn widthFn) Option {
+	return Option(func(o *option) {
+		o.widthFn = fn
 	})
 }
 
@@ -78,9 +95,10 @@ func UnfoldedSymbol(symbol rune) Option {
 	})
 }
 
-func New(headers []Header, opts ...Option) *Table {
+func New(opts ...Option) *Table {
 	option := option{
 		block:            termui.NewBlock(),
+		widthFn:          defaultWidthFn(),
 		headerStyle:      termui.NewStyle(termui.Theme.Default.Fg, termui.Theme.Default.Bg, termui.ModifierBold),
 		cursoredRowStyle: termui.NewStyle(termui.ColorBlack, termui.ColorYellow),
 		defaultRowStyle:  termui.NewStyle(termui.Theme.Default.Fg),
@@ -92,9 +110,8 @@ func New(headers []Header, opts ...Option) *Table {
 	}
 
 	return &Table{
-		opts:    option,
-		headers: headers,
-		node:    node.Root(),
+		opts: option,
+		node: node.Root(),
 	}
 }
 
@@ -106,8 +123,16 @@ func (self *Table) SetRect(x1, y1, x2, y2 int) {
 	self.opts.block.SetRect(x1, y1, x2, y2)
 }
 
-func (self *Table) SelectedRow() int {
+func (self *Table) GetSelectedRow() int {
 	return self.selectedRow
+}
+
+func (self *Table) GetNode() *node.Node {
+	return self.node
+}
+
+func (self *Table) SetHeaders(headers []string) {
+	self.headers = headers
 }
 
 func (self *Table) SetNode(node *node.Node) {
@@ -128,19 +153,21 @@ func (self *Table) rowPrefix(n *node.Node) string {
 func (self *Table) Draw(buf *termui.Buffer) {
 	self.opts.block.Draw(buf)
 
+	widths := self.opts.widthFn(self.headers, self.opts.block.Inner)
+
 	if self.opts.block.Inner.Dy() >= 3 {
 		var (
 			colPos []int
 			cur    int = widthFromLeftBorder
 		)
-		for _, h := range self.headers {
+		for _, w := range widths {
 			colPos = append(colPos, cur)
-			cur += h.Width
+			cur += w
 		}
 
 		for i, h := range self.headers {
 			buf.SetString(
-				termui.TrimString(h.Header, h.Width-widthFromLeftBorder),
+				termui.TrimString(h, widths[i]-widthFromLeftBorder),
 				self.opts.headerStyle,
 				image.Pt(
 					self.opts.block.Inner.Min.X+colPos[i],
@@ -172,13 +199,13 @@ func (self *Table) Draw(buf *termui.Buffer) {
 			if idx == self.selectedRow {
 				style = self.opts.cursoredRowStyle
 			}
-			for i, h := range self.headers {
+			for i, w := range widths {
 				row := node.Row()[i]
 				if i == 0 {
 					row = self.rowPrefix(node) + node.Row()[i]
 				}
 				buf.SetString(
-					termui.TrimString(row, h.Width-widthFromLeftBorder),
+					termui.TrimString(row, w-widthFromLeftBorder),
 					style,
 					image.Pt(self.opts.block.Inner.Min.X+colPos[i], y),
 				)

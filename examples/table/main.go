@@ -15,19 +15,9 @@ func main() {
 	}
 	defer termui.Close()
 
-	headers := []table.Header{
-		{
-			Header: "index",
-			Width:  10,
-		},
-		{
-			Header: "item",
-			Width:  10,
-		},
-	}
 	block := termui.NewBlock()
 	block.Title = "example"
-	t := table.New(headers, table.Block(block))
+	t := table.New(table.Block(block))
 
 	root := node.Root()
 	root.Append(
@@ -51,7 +41,7 @@ func main() {
 	for e := range event {
 		switch e.ID {
 		case "<Enter>":
-			root.Toggle(t.SelectedRow())
+			root.Toggle(t.GetSelectedRow())
 		case "<Down>":
 			t.ScrollDown()
 		case "<Up>":
